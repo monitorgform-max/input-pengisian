@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tab blank -->
+    <title>&#8203;</title>
+    <style>
+        /* --- RESET DASAR --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- TAHAP 1: LAYAR GAMBAR --- */
+        #tahap-gambar {
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://i.imgur.com/2ItjZr6.png');
+            background-size: 100% 100%; /* Paksa gambar full screen nutupin layar */
+            background-position: top left;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Tombol Input */
+        #btn-input {
+            position: absolute;
+            top: 50%; /* Posisi di tengah vertikal */
+            left: 50%; /* Posisi di tengah horizontal */
+            transform: translate(-50%, -50%);
+            padding: 12px 40px;
+            font-size: 1.2rem;
+            background-color: #2e7d32; /* Warna hijau ala tombol Google Sheets */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        #btn-input:hover {
+            background-color: #1b5e20;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        /* --- TAHAP 2: LAYAR HITAM GOMBAL --- */
+        #tahap-hitam {
+            display: none; /* Sembunyikan dari awal */
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .teks-gombal {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            animation: fadeIn 1.5s forwards;
+        }
+
+        .emot-love {
+            font-size: 6rem;
+            animation: heartBeat 1s infinite alternate;
+        }
+
+        /* --- ANIMASI --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes heartBeat {
+            to { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TAHAP 1: Muncul pertama kali -->
+    <div id="tahap-gambar">
+        <!-- Tombol "Input" -->
+        <button id="btn-input">Input</button>
+    </div>
+
+    <!-- TAHAP 2: Layar Hitam (Kejutan) -->
+    <div id="tahap-hitam">
+        <div class="teks-gombal">input aku kedalam hatimu..yuk bisa yuukkk..</div>
+        <div class="emot-love">🫰</div>
+    </div>
+
+    <script>
+        // Ambil elemen dari HTML
+        const tahapGambar = document.getElementById('tahap-gambar');
+        const tahapHitam = document.getElementById('tahap-hitam');
+        const btnInput = document.getElementById('btn-input');
+
+        // Aksi pas tombol "Input" diklik
+        btnInput.addEventListener('click', () => {
+            // Sembunyikan layar gambar
+            tahapGambar.style.display = 'none';
+            
+            // Tampilkan layar hitam (pakai flex biar otomatis ke tengah)
+            tahapHitam.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
