@@ -3,116 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tab blank -->
+    <!-- Tab dibuat blank -->
     <title>&#8203;</title>
     <style>
-        /* --- RESET DASAR --- */
+        /* --- RESET & DASAR --- */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
         }
 
-        /* --- TAHAP 1: LAYAR GAMBAR --- */
-        #tahap-gambar {
+        /* Setup container per tahap biar posisinya di tengah layar */
+        .tahap {
             width: 100vw;
             height: 100vh;
-            background-image: url('https://i.imgur.com/2ItjZr6.png');
-            background-size: 100% 100%; /* Paksa gambar full screen nutupin layar */
-            background-position: top left;
-            background-repeat: no-repeat;
-            position: relative;
-        }
-
-        /* Tombol Input */
-        #btn-input {
-            position: absolute;
-            top: 50%; /* Posisi di tengah vertikal */
-            left: 50%; /* Posisi di tengah horizontal */
-            transform: translate(-50%, -50%);
-            padding: 12px 40px;
-            font-size: 1.2rem;
-            background-color: #2e7d32; /* Warna hijau ala tombol Google Sheets */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            transition: 0.2s;
-            font-weight: bold;
-        }
-
-        #btn-input:hover {
-            background-color: #1b5e20;
-            transform: translate(-50%, -50%) scale(1.05);
-        }
-
-        /* --- TAHAP 2: LAYAR HITAM GOMBAL --- */
-        #tahap-hitam {
-            display: none; /* Sembunyikan dari awal */
-            width: 100vw;
-            height: 100vh;
-            background-color: #000;
-            color: #fff;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- TAHAP 1: FORM LAPORAN SANGKUT --- */
+        #tahap-1 {
+            background-color: #f4f6f9;
+        }
+        
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 6px solid #F15A23; /* Oranye khas BNI */
+            min-width: 300px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #005E6A; /* Tosca khas BNI */
+            font-weight: 800;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 25px;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 10px 5px;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        input {
+            padding: 8px 12px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+
+        .btn-submit-1 {
+            background-color: #F15A23;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .btn-submit-1:hover {
+            background-color: #d94d1a;
+        }
+
+        /* --- TAHAP 2: ORANYE BNI NIHIL --- */
+        #tahap-2 {
+            background-color: #F15A23;
+            color: white;
+        }
+
+        .teks-nihil {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 40px;
+            padding: 0 20px;
+            letter-spacing: 1px;
+            line-height: 1.4;
+        }
+
+        .btn-submit-2 {
+            background-color: white;
+            color: #F15A23;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-submit-2:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- TAHAP 3: HITAM & GOMBAL --- */
+        #tahap-3 {
+            background-color: #000;
+            color: white;
         }
 
         .teks-gombal {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
+            font-weight: bold;
             margin-bottom: 20px;
-            animation: fadeIn 1.5s forwards;
+            z-index: 10;
+            padding: 0 20px;
+            color: #fdd835; /* Kuning emas */
+            text-shadow: 0 0 15px rgba(253, 216, 53, 0.6);
+            line-height: 1.5;
+            animation: fadeIn 1s forwards;
         }
 
-        .emot-love {
-            font-size: 6rem;
-            animation: heartBeat 1s infinite alternate;
+        .emot-melet {
+            font-size: 5rem;
+            z-index: 10;
+            margin-top: 10px;
+            animation: bounce 1s infinite alternate;
         }
 
-        /* --- ANIMASI --- */
+        /* Animasi Teks & Emot */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        @keyframes heartBeat {
-            to { transform: scale(1.2); }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+
+        /* --- GLITTER --- */
+        #glitter-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .glitter {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- TAHAP 1: Muncul pertama kali -->
-    <div id="tahap-gambar">
-        <!-- Tombol "Input" -->
-        <button id="btn-input">Input</button>
+    <!-- TAHAP 1: FORM RESMI -->
+    <div id="tahap-1" class="tahap">
+        <div class="form-container">
+            <h1>LAPORAN UANG SANGKUT BNI</h1>
+            <table>
+                <tr>
+                    <td>CABANG</td>
+                    <td><input type="text" placeholder="Masukkan cabang..."></td>
+                </tr>
+                <tr>
+                    <td>PERIODE</td>
+                    <td><input type="date"></td>
+                </tr>
+            </table>
+            <button id="btn-submit-1" class="btn-submit-1">SUBMIT</button>
+        </div>
     </div>
 
-    <!-- TAHAP 2: Layar Hitam (Kejutan) -->
-    <div id="tahap-hitam">
-        <div class="teks-gombal">input aku kedalam hatimu..yuk bisa yuukkk..</div>
-        <div class="emot-love">🫰</div>
+    <!-- TAHAP 2: LAPORAN NIHIL -->
+    <div id="tahap-2" class="tahap hidden">
+        <div class="teks-nihil">UGA BATAM LAPORAN<br>UANG SANGKUT NIHIL</div>
+        <button id="btn-submit-2" class="btn-submit-2">SUBMIT</button>
+    </div>
+
+    <!-- TAHAP 3: KEJUTAN GOMBAL -->
+    <div id="tahap-3" class="tahap hidden">
+        <div id="glitter-container"></div>
+        <div class="teks-gombal">LAPORAN HATI TERSANGKUT<br>MOHON DITINDAK LANJUTI</div>
+        <div class="emot-melet">😜</div>
     </div>
 
     <script>
-        // Ambil elemen dari HTML
-        const tahapGambar = document.getElementById('tahap-gambar');
-        const tahapHitam = document.getElementById('tahap-hitam');
-        const btnInput = document.getElementById('btn-input');
+        // Ambil elemen
+        const tahap1 = document.getElementById('tahap-1');
+        const tahap2 = document.getElementById('tahap-2');
+        const tahap3 = document.getElementById('tahap-3');
+        
+        const btnSubmit1 = document.getElementById('btn-submit-1');
+        const btnSubmit2 = document.getElementById('btn-submit-2');
+        const glitterContainer = document.getElementById('glitter-container');
 
-        // Aksi pas tombol "Input" diklik
-        btnInput.addEventListener('click', () => {
-            // Sembunyikan layar gambar
-            tahapGambar.style.display = 'none';
-            
-            // Tampilkan layar hitam (pakai flex biar otomatis ke tengah)
-            tahapHitam.style.display = 'flex';
+        // Navigasi Tahap 1 -> Tahap 2
+        btnSubmit1.addEventListener('click', () => {
+            tahap1.classList.add('hidden');
+            tahap2.classList.remove('hidden');
         });
+
+        // Navigasi Tahap 2 -> Tahap 3
+        btnSubmit2.addEventListener('click', () => {
+            tahap2.classList.add('hidden');
+            tahap3.classList.remove('hidden');
+            mulaiGlitter(); // Panggil fungsi glitter pas masuk tahap 3
+        });
+
+        // Fungsi Glitter
+        function mulaiGlitter() {
+            const jumlahPartikel = 100;
+
+            for (let i = 0; i < jumlahPartikel; i++) {
+                setTimeout(() => {
+                    bikinPartikel();
+                }, Math.random() * 2000); 
+            }
+        }
+
+        function bikinPartikel() {
+            const particle = document.createElement('div');
+            particle.classList.add('glitter');
+            
+            // Ukuran
+            const size = Math.random() * 6 + 2 + 'px';
+            particle.style.width = size;
+            particle.style.height = size;
+            
+            // Posisi & Durasi
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDuration = Math.random() * 3 + 2 + 's';
+            
+            // Warna glitter (Putih, Emas, Pink)
+            const colors = ['#ffffff', '#fdd835', '#ff9a9e'];
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+            glitterContainer.appendChild(particle);
+
+            // Loop partikel
+            particle.addEventListener('animationiteration', () => {
+                particle.style.left = Math.random() * 100 + 'vw';
+            });
+        }
     </script>
 </body>
 </html>
