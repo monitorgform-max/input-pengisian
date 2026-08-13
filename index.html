@@ -10,160 +10,201 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000;
+            background-color: #0d0d12;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Courier New', Courier, monospace;
-            perspective: 1000px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
         }
 
-        /* --- KOTAK 3D KAYU --- */
-        #scene-box {
-            position: absolute;
-            width: 130px;
-            height: 130px;
-            transform-style: preserve-3d;
-            transform: translateY(-150vh) rotateX(-30deg) rotateY(45deg);
-        }
-
-        .face {
-            position: absolute;
-            width: 130px;
-            height: 130px;
-            background: linear-gradient(135deg, #5C3A21, #3E2312);
-            border: 2px solid #1A0F08;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.7);
-        }
-
-        .front  { transform: translateZ(65px); }
-        .back   { transform: rotateY(180deg) translateZ(65px); }
-        .right  { transform: rotateY(90deg) translateZ(65px); }
-        .left   { transform: rotateY(-90deg) translateZ(65px); }
-        .top    { transform: rotateX(90deg) translateZ(65px); background: #704629; }
-        .bottom { transform: rotateX(-90deg) translateZ(65px); background: #2B190D; }
-
-        /* Animasi Jatuh */
-        .jatuh {
-            animation: dropBox 1s cubic-bezier(0.5, 0, 0.75, 1) forwards;
-        }
-
-        @keyframes dropBox {
-            0% { transform: translateY(-150vh) rotateX(-60deg) rotateY(90deg); }
-            100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
-        }
-
-        /* Animasi Goyang Kiri-Kanan */
-        .goyang {
-            animation: shakeBox 0.12s infinite;
-        }
-
-        @keyframes shakeBox {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(-10px, 4px) rotate(-6deg); }
-            50% { transform: translate(10px, -4px) rotate(6deg); }
-            75% { transform: translate(-6px, -2px) rotate(-3deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
-
-        /* --- LAYAR DARAH & CIPRATAN --- */
-        #blood-screen {
+        /* --- BACKGROUND KOTA & EFEK KOMIK --- */
+        .comic-bg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle, rgba(90,2,2,0.95) 0%, rgba(35,0,0,0.98) 70%, rgba(10,0,0,1) 100%);
-            display: none;
+            background: radial-gradient(circle, #1a1a2e 0%, #050508 100%);
+            overflow: hidden;
+        }
+
+        /* Garis-garis aksi komik (Action Lines) */
+        .action-lines {
+            position: absolute;
+            width: 200vw;
+            height: 200vw;
+            top: -50vw;
+            left: -50vw;
+            background: repeating-conic-gradient(
+                from 0deg,
+                rgba(255, 0, 0, 0.05) 0deg 10deg,
+                transparent 10deg 20deg
+            );
+            animation: rotateLines 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotateLines {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- JARING LABA-LABA & EFEK WEB SHOOT --- */
+        #web-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            background: linear-gradient(to bottom, #fff, #888);
+            transform-origin: top center;
+            height: 0;
+            z-index: 10;
+        }
+
+        .shoot-web {
+            animation: shootWebAnim 0.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes shootWebAnim {
+            to { height: 60vh; }
+        }
+
+        /* --- KARAKTER / ICON SPIDER-MAN ENTRANCE --- */
+        #spidey-drop {
+            position: absolute;
+            top: -100px;
+            left: calc(50% - 40px);
+            width: 80px;
+            height: 80px;
+            background-color: #e63946;
+            border-radius: 50%;
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 50;
+            font-size: 3rem;
+            box-shadow: 0 0 30px #e63946, inset 0 0 15px rgba(0,0,0,0.5);
+            z-index: 15;
+            transform: translateY(-200px);
         }
 
-        .splatter {
+        .hero-landing {
+            animation: dropHero 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes dropHero {
+            0% { transform: translateY(0) scale(0.5); }
+            80% { transform: translateY(60vh) scale(1.1, 0.8); } /* Efek squish landing */
+            100% { transform: translateY(58vh) scale(1, 1); }
+        }
+
+        /* --- GELOMBANG KEJUTAN (SHOCKWAVE) --- */
+        .shockwave {
             position: absolute;
-            background-color: #3b0101;
+            top: calc(58vh + 40px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            border: 4px solid #e63946;
             border-radius: 50%;
-            filter: blur(2px);
-            opacity: 0.9;
+            opacity: 0;
+            z-index: 5;
         }
 
-        /* --- TEKS DRAMATIS --- */
+        .boom-wave {
+            animation: expandWave 0.6s ease-out forwards;
+        }
+
+        @keyframes expandWave {
+            0% { width: 10px; height: 10px; opacity: 1; border-width: 6px; }
+            100% { width: 800px; height: 800px; opacity: 0; border-width: 1px; }
+        }
+
+        /* --- TEKS DRAMATIS AKHIR --- */
         #teks-ending {
+            position: absolute;
             color: #ffffff;
-            font-size: 3.2rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-shadow: 0 0 25px #ff0000, 0 0 10px #000;
-            z-index: 60;
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-shadow: 4px 4px 0px #e63946, -2px -2px 0px #1d3557, 0 0 20px rgba(230,57,70,0.8);
+            z-index: 20;
             opacity: 0;
-            transform: scale(0.6);
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0.3) rotate(-5deg);
             text-align: center;
             padding: 0 20px;
         }
 
-        .tampil-teks {
-            opacity: 1 !important;
-            transform: scale(1) !important;
+        .pop-text {
+            animation: comicPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes comicPop {
+            0% { opacity: 0; transform: scale(0.3) rotate(-5deg); }
+            70% { opacity: 1; transform: scale(1.1) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        /* Efek Guncangan Layar */
+        .screen-shake {
+            animation: shakeScreen 0.4s ease;
+        }
+
+        @keyframes shakeScreen {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-10px, 10px); }
+            40% { transform: translate(10px, -10px); }
+            60% { transform: translate(-6px, 6px); }
+            80% { transform: translate(6px, -6px); }
+            100% { transform: translate(0, 0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Kotak 3D -->
-    <div id="scene-box" class="jatuh">
-        <div class="face front"></div>
-        <div class="face back"></div>
-        <div class="face right"></div>
-        <div class="face left"></div>
-        <div class="face top"></div>
-        <div class="face bottom"></div>
+    <div class="comic-bg">
+        <div class="action-lines"></div>
     </div>
 
-    <!-- Layar Darah -->
-    <div id="blood-screen">
-        <div id="teks-ending">I'M BROKEN INSIDE</div>
-    </div>
+    <div id="web-line"></div>
+    <div id="spidey-drop">🕷️</div>
+    <div id="shockwave" class="shockwave"></div>
+
+    <div id="teks-ending">I'M BROKEN INSIDE</div>
 
     <script>
-        const box = document.getElementById('scene-box');
-        const bloodScreen = document.getElementById('blood-screen');
+        const webLine = document.getElementById('web-line');
+        const spideyDrop = document.getElementById('spidey-drop');
+        const shockwave = document.getElementById('shockwave');
         const teksEnding = document.getElementById('teks-ending');
+        const body = document.body;
 
-        // Begitu animasi kotak selesai jatuh ke tanah...
-        box.addEventListener('animationend', (e) => {
-            if (e.animationName === 'dropBox') {
-                // Langsung ganti ke mode goyang-goyang
-                box.classList.remove('jatuh');
-                box.classList.add('goyang');
+        window.onload = () => {
+            // SCENE 1: Jaringan melesat turun (Thwip!)
+            setTimeout(() => {
+                webLine.classList.add('shoot-web');
+            }, 300);
 
-                // Goyang selama 2 detik, lalu BOOM meledak!
+            // SCENE 2: Spidey / Hero turun dengan gaya Superhero Landing
+            setTimeout(() => {
+                spideyDrop.classList.add('hero-landing');
+            }, 500);
+
+            // SCENE 3: Pas menghantam tanah (Boom! Shockwave & Screen Shake)
+            setTimeout(() => {
+                body.classList.add('screen-shake');
+                shockwave.classList.add('boom-wave');
+                spideyDrop.style.display = 'none'; // Karakter hilang setelah mendarat
+                webLine.style.display = 'none';
+
+                // SCENE 4: Teks pop-up gaya komik muncul menggantikan posisi landing
                 setTimeout(() => {
-                    box.style.display = 'none'; // Kotak hancur
-                    bloodScreen.style.display = 'flex'; // Layar berubah jadi darah
+                    teksEnding.classList.add('pop-text');
+                }, 200);
 
-                    // Generate cipratan darah acak di layar
-                    for (let i = 0; i < 35; i++) {
-                        const s = document.createElement('div');
-                        s.classList.add('splatter');
-                        const size = Math.random() * 90 + 20 + 'px';
-                        s.style.width = size;
-                        s.style.height = size;
-                        s.style.top = Math.random() * 100 + 'vh';
-                        s.style.left = Math.random() * 100 + 'vw';
-                        bloodScreen.appendChild(s);
-                    }
-
-                    // Teks muncul dramatis sesudah layar berdarah
-                    setTimeout(() => {
-                        teksEnding.classList.add('tampil-teks');
-                    }, 300);
-
-                }, 2000);
-            }
-        });
+            }, 1100); // Sinkron dengan durasi dropHero
+        };
     </script>
 </body>
 </html>
