@@ -22,21 +22,16 @@
         #falling-heart {
             position: absolute;
             font-size: 5rem;
-            transform: translateY(-150vh);
+            animation: dropHeart 1s cubic-bezier(0.5, 0, 0.75, 1) forwards;
             z-index: 10;
-            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8));
-        }
-
-        .jatuh-hati {
-            animation: dropHeart 1.2s cubic-bezier(0.5, 0, 0.75, 1) forwards;
         }
 
         @keyframes dropHeart {
-            0% { transform: translateY(-150vh) scale(0.8) rotate(-15deg); }
+            0% { transform: translateY(-120vh) scale(0.8) rotate(-15deg); }
             100% { transform: translateY(0) scale(1) rotate(0deg); }
         }
 
-        /* Animasi Goyang Saat Nyampe Tanah */
+        /* Animasi Goyang */
         .goyang-hati {
             animation: shakeHeart 0.1s infinite;
         }
@@ -49,32 +44,19 @@
             100% { transform: translate(0, 0) rotate(0deg); }
         }
 
-        /* --- LAYAR DARAH & PECAHAN --- */
+        /* --- LAYAR DARAH --- */
         #blood-screen {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle, rgba(90,2,2,0.95) 0%, rgba(30,0,0,0.98) 70%, rgba(10,0,0,1) 100%);
+            background: radial-gradient(circle, rgba(120,0,0,0.95) 0%, rgba(40,0,0,0.98) 70%, rgba(10,0,0,1) 100%);
             display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 50;
-            opacity: 0;
-            transition: opacity 0.4s ease-in;
-        }
-
-        .show-blood {
-            display: flex;
-            opacity: 1;
-        }
-
-        /* Partikel Pecahan Hati & Darah yang Meledak */
-        .shards {
-            position: absolute;
-            pointer-events: none;
-            z-index: 55;
         }
 
         /* --- TEKS DRAMATIS AKHIR --- */
@@ -87,7 +69,7 @@
             z-index: 60;
             opacity: 0;
             transform: scale(0.5);
-            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
             padding: 0 20px;
         }
@@ -96,11 +78,18 @@
             opacity: 1 !important;
             transform: scale(1) !important;
         }
+
+        /* Partikel Pecahan */
+        .shards {
+            position: absolute;
+            pointer-events: none;
+            z-index: 55;
+        }
     </style>
 </head>
 <body>
 
-    <div id="falling-heart" class="jatuh-hati">❤️</div>
+    <div id="falling-heart">❤️</div>
 
     <div id="blood-screen">
         <div id="teks-ending">I'M BROKEN INSIDE</div>
@@ -114,42 +103,33 @@
         // Begitu hati selesai jatuh ke dasar...
         heart.addEventListener('animationend', (e) => {
             if (e.animationName === 'dropHeart') {
-                // Hati mulai goyang-goyang tegang
-                heart.classList.remove('jatuh-hati');
                 heart.classList.add('goyang-hati');
 
-                // Goyang selama 1.8 detik, lalu BOOM MELEDAK berkeping-keping!
+                // Goyang selama 1.5 detik, lalu BOOM MELEDAK!
                 setTimeout(() => {
                     const rect = heart.getBoundingClientRect();
                     const startX = rect.left + rect.width / 2;
                     const startY = rect.top + rect.height / 2;
 
                     heart.style.display = 'none'; // Hati utuh hilang
-                    bloodScreen.classList.add('show-blood'); // Layar berubah berlumuran darah
+                    bloodScreen.style.display = 'flex'; // Munculkan layar darah
 
-                    // Ledakan pecahan hati (💔) dan cipratan darah
-                    ledakanHatiBerkeping(startX, startY);
+                    // Ledakan pecahan hati & darah
+                    for (let i = 0; i < 20; i++) {
+                        bikinPartikel(startX, startY, '💔', true);
+                    }
+                    for (let i = 0; i < 40; i++) {
+                        bikinPartikel(startX, startY, 'blood', false);
+                    }
 
-                    // Teks muncul dramatis di atas layar berdarah
+                    // Teks langsung muncul mulus
                     setTimeout(() => {
                         teksEnding.classList.add('tampil-teks');
-                    }, 400);
+                    }, 200);
 
-                }, 1800);
+                }, 1500);
             }
         });
-
-        // Fungsi efek ledakan serpihan
-        function ledakanHatiBerkeping(x, y) {
-            // Buat pecahan hati (💔)
-            for (let i = 0; i < 20; i++) {
-                bikinPartikel(x, y, '💔', true);
-            }
-            // Buat cipratan darah & titik daging hati
-            for (let i = 0; i < 40; i++) {
-                bikinPartikel(x, y, 'blood', false);
-            }
-        }
 
         function bikinPartikel(x, y, tipe, isEmoji) {
             const p = document.createElement('div');
@@ -170,7 +150,6 @@
 
             document.body.appendChild(p);
 
-            // Arah lemparan pecahan secara acak ke segala penjuru
             const angle = Math.random() * Math.PI * 2;
             const distance = Math.random() * 400 + 50;
             const targetX = Math.cos(angle) * distance;
