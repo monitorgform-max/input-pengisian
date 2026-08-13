@@ -5,212 +5,195 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>&#8203;</title>
     <style>
-        /* --- SETUP LAYAR BIOSKOP --- */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #050505; /* Hitam pekat */
+            background-color: #050505;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Courier New', Courier, monospace;
+            perspective: 1000px; /* Bikin efek 3D */
         }
 
-        /* --- BOX KAYU --- */
-        #box {
+        /* --- KOTAK 3D KAYU --- */
+        #scene-box {
+            position: absolute;
             width: 120px;
             height: 120px;
-            background-color: #5C3A21;
-            border: 6px solid #3E2312;
+            transform-style: preserve-3d;
+            transform: translateY(-120vh) rotateX(-20deg) rotateY(30deg);
+        }
+
+        /* Sisi-sisi Kotak 3D */
+        .face {
             position: absolute;
-            bottom: 20vh; /* Jatuh ke area bawah layar */
-            /* Tekstur kayu simpel pake gradient */
-            background-image: repeating-linear-gradient(
-                45deg,
-                rgba(0,0,0,0.1) 0px,
-                rgba(0,0,0,0.1) 10px,
-                transparent 10px,
-                transparent 20px
-            );
-            transform: translateY(-100vh); /* Posisi awal di atas langit */
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
+            width: 120px;
+            height: 120px;
+            background: #5C3A21;
+            border: 2px solid #3E2312;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
         }
 
-        /* Animasi Jatuh */
-        .jatuh {
-            animation: dropAnimation 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        .front  { transform: translateZ(60px); }
+        .back   { transform: rotateY(180deg) translateZ(60px); }
+        .right  { transform: rotateY(90deg) translateZ(60px); }
+        .left   { transform: rotateY(-90deg) translateZ(60px); }
+        .top    { transform: rotateX(90deg) translateZ(60px); background: #704629; }
+        .bottom { transform: rotateX(-90deg) translateZ(60px); background: #3E2312; }
+
+        /* Animasi Jatuh 3D */
+        .jatuh-3d {
+            animation: dropBox 1.2s cubic-bezier(0.5, 0.05, 0.5, 1.1) forwards;
         }
 
-        /* Animasi Goyang (Shake) */
-        .goyang {
-            animation: shakeAnimation 0.1s infinite;
+        /* Animasi Goyang Kiri Kanan */
+        .goyang-kiri-kanan {
+            animation: shakeBox 0.15s infinite;
         }
 
-        /* --- TEKS ENDING --- */
-        #teks-ending {
+        /* --- LAYAR BERLUMURAN DARAH (SPLATTER) --- */
+        #blood-screen {
             position: absolute;
-            color: #8a0303; /* Merah darah */
-            font-size: 3rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 10px rgba(138, 3, 3, 0.8);
-            transform: translateY(-100vh);
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, rgba(138,3,3,0.8) 0%, rgba(60,1,1,0.95) 70%, rgba(20,0,0,1) 100%);
             opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .blood-splash-active {
+            opacity: 1 !important;
+            animation: screenPulse 0.5s ease-out;
+        }
+
+        /* Efek Cipratan Darah Tambahan di Layar */
+        .splatter-spot {
+            position: absolute;
+            background-color: #610202;
+            border-radius: 50%;
+            opacity: 0.85;
+        }
+
+        /* --- TEKS DRAMATIS --- */
+        #teks-ending {
+            color: #ffffff;
+            font-size: 3.2rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px #ff0000, 2px 2px 5px #000;
+            opacity: 0;
+            transform: scale(0.8);
+            z-index: 10;
             text-align: center;
             padding: 0 20px;
         }
 
-        .turun-teks {
-            animation: textDrop 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        .tampil-teks {
+            animation: textZoomIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        /* --- PARTIKEL LEDAKAN (DARAH & HATI) --- */
-        .particle {
-            position: absolute;
-            bottom: 25vh; /* Titik ledakan sama dengan posisi box */
-            left: 50%;
-            pointer-events: none;
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(0);
+        /* --- KEYFRAMES ANIMASI --- */
+        @keyframes dropBox {
+            0% { transform: translateY(-120vh) rotateX(-40deg) rotateY(45deg); }
+            80% { transform: translateY(20px) rotateX(0deg) rotateY(0deg); }
+            100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); }
         }
 
-        .blood {
-            background-color: #8a0303;
-            border-radius: 50%;
+        @keyframes shakeBox {
+            0% { transform: translateY(0) rotate(0deg) translateX(0); }
+            25% { transform: translateY(0) rotate(-6deg) translateX(-8px); }
+            50% { transform: translateY(0) rotate(0deg) translateX(0); }
+            75% { transform: translateY(0) rotate(6deg) translateX(8px); }
+            100% { transform: translateY(0) rotate(0deg) translateX(0); }
         }
 
-        .heart {
-            font-size: 2rem;
-            color: #ff0000;
+        @keyframes screenPulse {
+            0% { transform: scale(1.05); }
+            50% { transform: scale(0.98); }
+            100% { transform: scale(1); }
         }
 
-        .explode-anim {
-            animation: shoot 1s ease-out forwards;
+        @keyframes textZoomIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- KEYFRAMES --- */
-        @keyframes dropAnimation {
-            0% { transform: translateY(-100vh) rotate(5deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
-
-        @keyframes shakeAnimation {
-            0% { transform: translateY(0) translate(2px, 1px) rotate(0deg); }
-            10% { transform: translateY(0) translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translateY(0) translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translateY(0) translate(0px, 2px) rotate(0deg); }
-            40% { transform: translateY(0) translate(1px, -1px) rotate(1deg); }
-            50% { transform: translateY(0) translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translateY(0) translate(-3px, 1px) rotate(0deg); }
-            70% { transform: translateY(0) translate(2px, 1px) rotate(-1deg); }
-            80% { transform: translateY(0) translate(-1px, -1px) rotate(1deg); }
-            90% { transform: translateY(0) translate(2px, 2px) rotate(0deg); }
-            100% { transform: translateY(0) translate(1px, -2px) rotate(-1deg); }
-        }
-
-        @keyframes textDrop {
-            0% { transform: translateY(-50vh); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes shoot {
-            0% { 
-                transform: translate(-50%, -50%) scale(1); 
-                opacity: 1;
-            }
-            100% { 
-                transform: translate(var(--tx), var(--ty)) scale(var(--s)); 
-                opacity: 0;
-            }
-        }
-
-        /* Utility */
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- Properti Scene -->
-    <div id="box"></div>
-    <div id="teks-ending">I'M BROKEN INSIDE</div>
+    <!-- Kotak 3D -->
+    <div id="scene-box">
+        <div class="face front"></div>
+        <div class="face back"></div>
+        <div class="face right"></div>
+        <div class="face left"></div>
+        <div class="face top"></div>
+        <div class="face bottom"></div>
+    </div>
+
+    <!-- Layar Darah & Teks -->
+    <div id="blood-screen">
+        <div id="teks-ending">I'M BROKEN INSIDE</div>
+    </div>
 
     <script>
-        const box = document.getElementById('box');
+        const sceneBox = document.getElementById('scene-box');
+            const bloodScreen = document.getElementById('blood-screen');
         const teksEnding = document.getElementById('teks-ending');
 
-        // ALUR CERITA (TIMELINE SUTRADARA)
         window.onload = () => {
-            // SCENE 1: Detik ke-0, Box jatuh
-            box.classList.add('jatuh');
+            // SCENE 1: Kotak 3D jatuh dari langit
+            sceneBox.classList.add('jatuh-3d');
 
-            // SCENE 2: Detik ke-1, Box nyampe tanah dan goyang-goyang
+            // SCENE 2: Sesampainya di dasar, mulai goyang kiri-kanan
             setTimeout(() => {
-                box.classList.remove('jatuh');
-                box.classList.add('goyang');
-            }, 1000);
+                sceneBox.classList.remove('jatuh-3d');
+                sceneBox.classList.add('goyang-kiri-kanan');
+            }, 1200);
 
-            // SCENE 3: Detik ke-3.5, Box meledak!
+            // SCENE 3: BOOM! Meledak jadi darah
             setTimeout(() => {
-                box.classList.add('hidden'); // Box hilang
-                ledakanDarahDanHati();       // Muncratan partikel
-            }, 3500);
+                sceneBox.classList.add('hidden'); // Kotak hancur/hilang
+                
+                // Layar berubah berlumuran darah
+                bloodScreen.classList.add('blood-splash-active');
+                bikinCipratanDarahRandom();
 
-            // SCENE 4: Detik ke-4, Teks turun
-            setTimeout(() => {
-                teksEnding.classList.add('turun-teks');
-            }, 4000);
+                // SCENE 4: Teks muncul di atas darah
+                setTimeout(() => {
+                    teksEnding.classList.add('tampil-teks');
+                }, 400);
+
+            }, 3200); // Durasi tegang goyang sekitar 2 detik
         };
 
-        // EFEK SPESIAL (VFX) LEDAKAN
-        function ledakanDarahDanHati() {
-            // Bikin partikel Darah
-            for (let i = 0; i < 40; i++) {
-                bikinPartikel('blood');
+        // Fungsi nambahin detail cipratan darah acak di layar
+        function bikinCipratanDarahRandom() {
+            for (let i = 0; i < 25; i++) {
+                const spot = document.createElement('div');
+                spot.classList.add('splatter-spot');
+                
+                const size = Math.random() * 80 + 20 + 'px';
+                spot.style.width = size;
+                spot.style.height = size;
+                spot.style.top = Math.random() * 100 + 'vh';
+                spot.style.left = Math.random() * 100 + 'vw';
+                spot.style.filter = 'blur(2px)';
+                
+                bloodScreen.appendChild(spot);
             }
-            // Bikin partikel Hati Patah
-            for (let i = 0; i < 15; i++) {
-                bikinPartikel('heart');
-            }
-        }
-
-        function bikinPartikel(tipe) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle', 'explode-anim');
-
-            if (tipe === 'blood') {
-                particle.classList.add('blood');
-                // Ukuran darah random (3px - 15px)
-                const size = Math.random() * 12 + 3 + 'px';
-                particle.style.width = size;
-                particle.style.height = size;
-            } else if (tipe === 'heart') {
-                particle.classList.add('heart');
-                particle.innerText = '💔';
-                // Ukuran hati random
-                particle.style.fontSize = Math.random() * 1.5 + 1 + 'rem';
-            }
-
-            // Hitung arah ledakan menyebar (X dan Y acak buat lemparan)
-            // Nilai X antara -300px sampe 300px
-            // Nilai Y antara -400px (ke atas) sampe 100px (ke bawah)
-            const tx = (Math.random() - 0.5) * 600 + 'px';
-            const ty = (Math.random() - 1) * 500 + 'px';
-            const scale = Math.random() * 1.5 + 0.5;
-
-            // Masukin nilai arah ledakan ke CSS Variable
-            particle.style.setProperty('--tx', tx);
-            particle.style.setProperty('--ty', ty);
-            particle.style.setProperty('--s', scale);
-
-            document.body.appendChild(particle);
-
-            // Hapus sisa partikel biar ga menuh-menuhin memori browser
-            particle.addEventListener('animationend', () => {
-                particle.remove();
-            });
         }
     </script>
 </body>
