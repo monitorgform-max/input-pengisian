@@ -10,201 +10,180 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #0d0d12;
+            background-color: #050505;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
 
-        /* --- BACKGROUND KOTA & EFEK KOMIK --- */
-        .comic-bg {
+        /* --- HATI YANG JATUH --- */
+        #falling-heart {
+            position: absolute;
+            font-size: 5rem;
+            transform: translateY(-150vh);
+            z-index: 10;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8));
+        }
+
+        .jatuh-hati {
+            animation: dropHeart 1.2s cubic-bezier(0.5, 0, 0.75, 1) forwards;
+        }
+
+        @keyframes dropHeart {
+            0% { transform: translateY(-150vh) scale(0.8) rotate(-15deg); }
+            100% { transform: translateY(0) scale(1) rotate(0deg); }
+        }
+
+        /* Animasi Goyang Saat Nyampe Tanah */
+        .goyang-hati {
+            animation: shakeHeart 0.1s infinite;
+        }
+
+        @keyframes shakeHeart {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-8px, 4px) rotate(-8deg); }
+            50% { transform: translate(8px, -4px) rotate(8deg); }
+            75% { transform: translate(-4px, -2px) rotate(-4deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* --- LAYAR DARAH & PECAHAN --- */
+        #blood-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle, #1a1a2e 0%, #050508 100%);
-            overflow: hidden;
-        }
-
-        /* Garis-garis aksi komik (Action Lines) */
-        .action-lines {
-            position: absolute;
-            width: 200vw;
-            height: 200vw;
-            top: -50vw;
-            left: -50vw;
-            background: repeating-conic-gradient(
-                from 0deg,
-                rgba(255, 0, 0, 0.05) 0deg 10deg,
-                transparent 10deg 20deg
-            );
-            animation: rotateLines 20s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes rotateLines {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* --- JARING LABA-LABA & EFEK WEB SHOOT --- */
-        #web-line {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 4px;
-            background: linear-gradient(to bottom, #fff, #888);
-            transform-origin: top center;
-            height: 0;
-            z-index: 10;
-        }
-
-        .shoot-web {
-            animation: shootWebAnim 0.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
-        }
-
-        @keyframes shootWebAnim {
-            to { height: 60vh; }
-        }
-
-        /* --- KARAKTER / ICON SPIDER-MAN ENTRANCE --- */
-        #spidey-drop {
-            position: absolute;
-            top: -100px;
-            left: calc(50% - 40px);
-            width: 80px;
-            height: 80px;
-            background-color: #e63946;
-            border-radius: 50%;
-            display: flex;
+            background: radial-gradient(circle, rgba(90,2,2,0.95) 0%, rgba(30,0,0,0.98) 70%, rgba(10,0,0,1) 100%);
+            display: none;
             justify-content: center;
             align-items: center;
-            font-size: 3rem;
-            box-shadow: 0 0 30px #e63946, inset 0 0 15px rgba(0,0,0,0.5);
-            z-index: 15;
-            transform: translateY(-200px);
-        }
-
-        .hero-landing {
-            animation: dropHero 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        @keyframes dropHero {
-            0% { transform: translateY(0) scale(0.5); }
-            80% { transform: translateY(60vh) scale(1.1, 0.8); } /* Efek squish landing */
-            100% { transform: translateY(58vh) scale(1, 1); }
-        }
-
-        /* --- GELOMBANG KEJUTAN (SHOCKWAVE) --- */
-        .shockwave {
-            position: absolute;
-            top: calc(58vh + 40px);
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 10px;
-            height: 10px;
-            border: 4px solid #e63946;
-            border-radius: 50%;
+            z-index: 50;
             opacity: 0;
-            z-index: 5;
+            transition: opacity 0.4s ease-in;
         }
 
-        .boom-wave {
-            animation: expandWave 0.6s ease-out forwards;
+        .show-blood {
+            display: flex;
+            opacity: 1;
         }
 
-        @keyframes expandWave {
-            0% { width: 10px; height: 10px; opacity: 1; border-width: 6px; }
-            100% { width: 800px; height: 800px; opacity: 0; border-width: 1px; }
+        /* Partikel Pecahan Hati & Darah yang Meledak */
+        .shards {
+            position: absolute;
+            pointer-events: none;
+            z-index: 55;
         }
 
         /* --- TEKS DRAMATIS AKHIR --- */
         #teks-ending {
-            position: absolute;
             color: #ffffff;
-            font-size: 3.5rem;
-            font-weight: 900;
+            font-size: 3rem;
+            font-weight: bold;
             letter-spacing: 3px;
-            text-shadow: 4px 4px 0px #e63946, -2px -2px 0px #1d3557, 0 0 20px rgba(230,57,70,0.8);
-            z-index: 20;
+            text-shadow: 0 0 25px #ff0000, 0 0 10px #000;
+            z-index: 60;
             opacity: 0;
-            transform: scale(0.3) rotate(-5deg);
+            transform: scale(0.5);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
             padding: 0 20px;
         }
 
-        .pop-text {
-            animation: comicPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes comicPop {
-            0% { opacity: 0; transform: scale(0.3) rotate(-5deg); }
-            70% { opacity: 1; transform: scale(1.1) rotate(2deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
-        }
-
-        /* Efek Guncangan Layar */
-        .screen-shake {
-            animation: shakeScreen 0.4s ease;
-        }
-
-        @keyframes shakeScreen {
-            0% { transform: translate(0, 0); }
-            20% { transform: translate(-10px, 10px); }
-            40% { transform: translate(10px, -10px); }
-            60% { transform: translate(-6px, 6px); }
-            80% { transform: translate(6px, -6px); }
-            100% { transform: translate(0, 0); }
+        .tampil-teks {
+            opacity: 1 !important;
+            transform: scale(1) !important;
         }
     </style>
 </head>
 <body>
 
-    <div class="comic-bg">
-        <div class="action-lines"></div>
+    <div id="falling-heart" class="jatuh-hati">❤️</div>
+
+    <div id="blood-screen">
+        <div id="teks-ending">I'M BROKEN INSIDE</div>
     </div>
 
-    <div id="web-line"></div>
-    <div id="spidey-drop">🕷️</div>
-    <div id="shockwave" class="shockwave"></div>
-
-    <div id="teks-ending">I'M BROKEN INSIDE</div>
-
     <script>
-        const webLine = document.getElementById('web-line');
-        const spideyDrop = document.getElementById('spidey-drop');
-        const shockwave = document.getElementById('shockwave');
+        const heart = document.getElementById('falling-heart');
+        const bloodScreen = document.getElementById('blood-screen');
         const teksEnding = document.getElementById('teks-ending');
-        const body = document.body;
 
-        window.onload = () => {
-            // SCENE 1: Jaringan melesat turun (Thwip!)
-            setTimeout(() => {
-                webLine.classList.add('shoot-web');
-            }, 300);
+        // Begitu hati selesai jatuh ke dasar...
+        heart.addEventListener('animationend', (e) => {
+            if (e.animationName === 'dropHeart') {
+                // Hati mulai goyang-goyang tegang
+                heart.classList.remove('jatuh-hati');
+                heart.classList.add('goyang-hati');
 
-            // SCENE 2: Spidey / Hero turun dengan gaya Superhero Landing
-            setTimeout(() => {
-                spideyDrop.classList.add('hero-landing');
-            }, 500);
-
-            // SCENE 3: Pas menghantam tanah (Boom! Shockwave & Screen Shake)
-            setTimeout(() => {
-                body.classList.add('screen-shake');
-                shockwave.classList.add('boom-wave');
-                spideyDrop.style.display = 'none'; // Karakter hilang setelah mendarat
-                webLine.style.display = 'none';
-
-                // SCENE 4: Teks pop-up gaya komik muncul menggantikan posisi landing
+                // Goyang selama 1.8 detik, lalu BOOM MELEDAK berkeping-keping!
                 setTimeout(() => {
-                    teksEnding.classList.add('pop-text');
-                }, 200);
+                    const rect = heart.getBoundingClientRect();
+                    const startX = rect.left + rect.width / 2;
+                    const startY = rect.top + rect.height / 2;
 
-            }, 1100); // Sinkron dengan durasi dropHero
-        };
+                    heart.style.display = 'none'; // Hati utuh hilang
+                    bloodScreen.classList.add('show-blood'); // Layar berubah berlumuran darah
+
+                    // Ledakan pecahan hati (💔) dan cipratan darah
+                    ledakanHatiBerkeping(startX, startY);
+
+                    // Teks muncul dramatis di atas layar berdarah
+                    setTimeout(() => {
+                        teksEnding.classList.add('tampil-teks');
+                    }, 400);
+
+                }, 1800);
+            }
+        });
+
+        // Fungsi efek ledakan serpihan
+        function ledakanHatiBerkeping(x, y) {
+            // Buat pecahan hati (💔)
+            for (let i = 0; i < 20; i++) {
+                bikinPartikel(x, y, '💔', true);
+            }
+            // Buat cipratan darah & titik daging hati
+            for (let i = 0; i < 40; i++) {
+                bikinPartikel(x, y, 'blood', false);
+            }
+        }
+
+        function bikinPartikel(x, y, tipe, isEmoji) {
+            const p = document.createElement('div');
+            p.classList.add('shards');
+            p.style.left = x + 'px';
+            p.style.top = y + 'px';
+
+            if (isEmoji) {
+                p.innerText = tipe;
+                p.style.fontSize = Math.random() * 1.5 + 0.8 + 'rem';
+            } else {
+                p.style.backgroundColor = Math.random() > 0.3 ? '#8a0303' : '#ff1a1a';
+                p.style.borderRadius = '50%';
+                const size = Math.random() * 14 + 4 + 'px';
+                p.style.width = size;
+                p.style.height = size;
+            }
+
+            document.body.appendChild(p);
+
+            // Arah lemparan pecahan secara acak ke segala penjuru
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 400 + 50;
+            const targetX = Math.cos(angle) * distance;
+            const targetY = Math.sin(angle) * distance;
+
+            p.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${targetX}px, ${targetY}px) scale(0.2)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 800 + 600,
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+            }).onfinish = () => p.remove();
+        }
     </script>
 </body>
 </html>
