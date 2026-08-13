@@ -3,281 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Tab dibuat blank -->
     <title>&#8203;</title>
     <style>
-        /* --- RESET & DASAR --- */
+        /* --- SETUP LAYAR BIOSKOP --- */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #050505; /* Hitam pekat */
             overflow: hidden;
-        }
-
-        /* Setup container per tahap biar posisinya di tengah layar */
-        .tahap {
-            width: 100vw;
-            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* --- BOX KAYU --- */
+        #box {
+            width: 120px;
+            height: 120px;
+            background-color: #5C3A21;
+            border: 6px solid #3E2312;
             position: absolute;
-            top: 0;
-            left: 0;
+            bottom: 20vh; /* Jatuh ke area bawah layar */
+            /* Tekstur kayu simpel pake gradient */
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(0,0,0,0.1) 0px,
+                rgba(0,0,0,0.1) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            transform: translateY(-100vh); /* Posisi awal di atas langit */
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
         }
 
-        .hidden {
-            display: none !important;
+        /* Animasi Jatuh */
+        .jatuh {
+            animation: dropAnimation 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
         }
 
-        /* --- TAHAP 1: FORM LAPORAN SANGKUT --- */
-        #tahap-1 {
-            background-color: #f4f6f9;
-        }
-        
-        .form-container {
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-top: 6px solid #F15A23; /* Oranye khas BNI */
-            min-width: 300px;
+        /* Animasi Goyang (Shake) */
+        .goyang {
+            animation: shakeAnimation 0.1s infinite;
         }
 
-        h1 {
-            font-size: 1.5rem;
-            margin-top: 0;
-            margin-bottom: 25px;
-            color: #005E6A; /* Tosca khas BNI */
-            font-weight: 800;
-        }
-
-        table {
-            width: 100%;
-            margin-bottom: 25px;
-            border-collapse: collapse;
-        }
-
-        td {
-            padding: 10px 5px;
-            text-align: left;
-            font-weight: bold;
-            color: #333;
-            font-size: 0.9rem;
-        }
-
-        input {
-            padding: 8px 12px;
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: inherit;
-        }
-
-        .btn-submit-1 {
-            background-color: #F15A23;
-            color: white;
-            border: none;
-            padding: 10px 30px;
-            font-size: 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            transition: 0.2s;
-        }
-
-        .btn-submit-1:hover {
-            background-color: #d94d1a;
-        }
-
-        /* --- TAHAP 2: ORANYE BNI NIHIL --- */
-        #tahap-2 {
-            background-color: #F15A23;
-            color: white;
-        }
-
-        .teks-nihil {
-            font-size: 2.5rem;
-            font-weight: 900;
-            margin-bottom: 40px;
-            padding: 0 20px;
-            letter-spacing: 1px;
-            line-height: 1.4;
-        }
-
-        .btn-submit-2 {
-            background-color: white;
-            color: #F15A23;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        .btn-submit-2:hover {
-            transform: scale(1.05);
-        }
-
-        /* --- TAHAP 3: HITAM & GOMBAL --- */
-        #tahap-3 {
-            background-color: #000;
-            color: white;
-        }
-
-        .teks-gombal {
-            font-size: 2.2rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            z-index: 10;
-            padding: 0 20px;
-            color: #fdd835; /* Kuning emas */
-            text-shadow: 0 0 15px rgba(253, 216, 53, 0.6);
-            line-height: 1.5;
-            animation: fadeIn 1s forwards;
-        }
-
-        .emot-melet {
-            font-size: 5rem;
-            z-index: 10;
-            margin-top: 10px;
-            animation: bounce 1s infinite alternate;
-        }
-
-        /* Animasi Teks & Emot */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-15px); }
-        }
-
-        /* --- GLITTER --- */
-        #glitter-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .glitter {
+        /* --- TEKS ENDING --- */
+        #teks-ending {
             position: absolute;
-            background-color: #fff;
-            border-radius: 50%;
+            color: #8a0303; /* Merah darah */
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(138, 3, 3, 0.8);
+            transform: translateY(-100vh);
             opacity: 0;
-            animation: fall linear infinite;
+            text-align: center;
+            padding: 0 20px;
         }
 
-        @keyframes fall {
-            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        .turun-teks {
+            animation: textDrop 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+
+        /* --- PARTIKEL LEDAKAN (DARAH & HATI) --- */
+        .particle {
+            position: absolute;
+            bottom: 25vh; /* Titik ledakan sama dengan posisi box */
+            left: 50%;
+            pointer-events: none;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+        .blood {
+            background-color: #8a0303;
+            border-radius: 50%;
+        }
+
+        .heart {
+            font-size: 2rem;
+            color: #ff0000;
+        }
+
+        .explode-anim {
+            animation: shoot 1s ease-out forwards;
+        }
+
+        /* --- KEYFRAMES --- */
+        @keyframes dropAnimation {
+            0% { transform: translateY(-100vh) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        @keyframes shakeAnimation {
+            0% { transform: translateY(0) translate(2px, 1px) rotate(0deg); }
+            10% { transform: translateY(0) translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translateY(0) translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translateY(0) translate(0px, 2px) rotate(0deg); }
+            40% { transform: translateY(0) translate(1px, -1px) rotate(1deg); }
+            50% { transform: translateY(0) translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translateY(0) translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translateY(0) translate(2px, 1px) rotate(-1deg); }
+            80% { transform: translateY(0) translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translateY(0) translate(2px, 2px) rotate(0deg); }
+            100% { transform: translateY(0) translate(1px, -2px) rotate(-1deg); }
+        }
+
+        @keyframes textDrop {
+            0% { transform: translateY(-50vh); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes shoot {
+            0% { 
+                transform: translate(-50%, -50%) scale(1); 
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) scale(var(--s)); 
+                opacity: 0;
+            }
+        }
+
+        /* Utility */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- TAHAP 1: FORM RESMI -->
-    <div id="tahap-1" class="tahap">
-        <div class="form-container">
-            <h1>LAPORAN UANG SANGKUT BNI</h1>
-            <table>
-                <tr>
-                    <td>CABANG</td>
-                    <td><input type="text" placeholder="Masukkan cabang..."></td>
-                </tr>
-                <tr>
-                    <td>PERIODE</td>
-                    <td><input type="date"></td>
-                </tr>
-            </table>
-            <button id="btn-submit-1" class="btn-submit-1">SUBMIT</button>
-        </div>
-    </div>
-
-    <!-- TAHAP 2: LAPORAN NIHIL -->
-    <div id="tahap-2" class="tahap hidden">
-        <div class="teks-nihil">UGA BATAM LAPORAN<br>UANG SANGKUT NIHIL</div>
-        <button id="btn-submit-2" class="btn-submit-2">SUBMIT</button>
-    </div>
-
-    <!-- TAHAP 3: KEJUTAN GOMBAL -->
-    <div id="tahap-3" class="tahap hidden">
-        <div id="glitter-container"></div>
-        <div class="teks-gombal">LAPORAN HATI TERSANGKUT<br>MOHON DITINDAK LANJUTI</div>
-        <div class="emot-melet">😜</div>
-    </div>
+    <!-- Properti Scene -->
+    <div id="box"></div>
+    <div id="teks-ending">I'M BROKEN INSIDE</div>
 
     <script>
-        // Ambil elemen
-        const tahap1 = document.getElementById('tahap-1');
-        const tahap2 = document.getElementById('tahap-2');
-        const tahap3 = document.getElementById('tahap-3');
-        
-        const btnSubmit1 = document.getElementById('btn-submit-1');
-        const btnSubmit2 = document.getElementById('btn-submit-2');
-        const glitterContainer = document.getElementById('glitter-container');
+        const box = document.getElementById('box');
+        const teksEnding = document.getElementById('teks-ending');
 
-        // Navigasi Tahap 1 -> Tahap 2
-        btnSubmit1.addEventListener('click', () => {
-            tahap1.classList.add('hidden');
-            tahap2.classList.remove('hidden');
-        });
+        // ALUR CERITA (TIMELINE SUTRADARA)
+        window.onload = () => {
+            // SCENE 1: Detik ke-0, Box jatuh
+            box.classList.add('jatuh');
 
-        // Navigasi Tahap 2 -> Tahap 3
-        btnSubmit2.addEventListener('click', () => {
-            tahap2.classList.add('hidden');
-            tahap3.classList.remove('hidden');
-            mulaiGlitter(); // Panggil fungsi glitter pas masuk tahap 3
-        });
+            // SCENE 2: Detik ke-1, Box nyampe tanah dan goyang-goyang
+            setTimeout(() => {
+                box.classList.remove('jatuh');
+                box.classList.add('goyang');
+            }, 1000);
 
-        // Fungsi Glitter
-        function mulaiGlitter() {
-            const jumlahPartikel = 100;
+            // SCENE 3: Detik ke-3.5, Box meledak!
+            setTimeout(() => {
+                box.classList.add('hidden'); // Box hilang
+                ledakanDarahDanHati();       // Muncratan partikel
+            }, 3500);
 
-            for (let i = 0; i < jumlahPartikel; i++) {
-                setTimeout(() => {
-                    bikinPartikel();
-                }, Math.random() * 2000); 
+            // SCENE 4: Detik ke-4, Teks turun
+            setTimeout(() => {
+                teksEnding.classList.add('turun-teks');
+            }, 4000);
+        };
+
+        // EFEK SPESIAL (VFX) LEDAKAN
+        function ledakanDarahDanHati() {
+            // Bikin partikel Darah
+            for (let i = 0; i < 40; i++) {
+                bikinPartikel('blood');
+            }
+            // Bikin partikel Hati Patah
+            for (let i = 0; i < 15; i++) {
+                bikinPartikel('heart');
             }
         }
 
-        function bikinPartikel() {
+        function bikinPartikel(tipe) {
             const particle = document.createElement('div');
-            particle.classList.add('glitter');
-            
-            // Ukuran
-            const size = Math.random() * 6 + 2 + 'px';
-            particle.style.width = size;
-            particle.style.height = size;
-            
-            // Posisi & Durasi
-            particle.style.left = Math.random() * 100 + 'vw';
-            particle.style.animationDuration = Math.random() * 3 + 2 + 's';
-            
-            // Warna glitter (Putih, Emas, Pink)
-            const colors = ['#ffffff', '#fdd835', '#ff9a9e'];
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            particle.classList.add('particle', 'explode-anim');
 
-            glitterContainer.appendChild(particle);
+            if (tipe === 'blood') {
+                particle.classList.add('blood');
+                // Ukuran darah random (3px - 15px)
+                const size = Math.random() * 12 + 3 + 'px';
+                particle.style.width = size;
+                particle.style.height = size;
+            } else if (tipe === 'heart') {
+                particle.classList.add('heart');
+                particle.innerText = '💔';
+                // Ukuran hati random
+                particle.style.fontSize = Math.random() * 1.5 + 1 + 'rem';
+            }
 
-            // Loop partikel
-            particle.addEventListener('animationiteration', () => {
-                particle.style.left = Math.random() * 100 + 'vw';
+            // Hitung arah ledakan menyebar (X dan Y acak buat lemparan)
+            // Nilai X antara -300px sampe 300px
+            // Nilai Y antara -400px (ke atas) sampe 100px (ke bawah)
+            const tx = (Math.random() - 0.5) * 600 + 'px';
+            const ty = (Math.random() - 1) * 500 + 'px';
+            const scale = Math.random() * 1.5 + 0.5;
+
+            // Masukin nilai arah ledakan ke CSS Variable
+            particle.style.setProperty('--tx', tx);
+            particle.style.setProperty('--ty', ty);
+            particle.style.setProperty('--s', scale);
+
+            document.body.appendChild(particle);
+
+            // Hapus sisa partikel biar ga menuh-menuhin memori browser
+            particle.addEventListener('animationend', () => {
+                particle.remove();
             });
         }
     </script>
